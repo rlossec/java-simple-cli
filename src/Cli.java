@@ -20,8 +20,12 @@ public class Cli {
 				break; // Forces exit of the while loop
 			} else if (command.equals("date")) {
 				LocalDateTime date = LocalDateTime.now();
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 				output = date.format(formatter);
+			} else if (command.equals("time")) {
+				LocalDateTime datetime = LocalDateTime.now();
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss:ns");
+				output = datetime.format(formatter);
 			} else {
 				// String concatenation
 				output = "Command '" + command + "' not found.";
