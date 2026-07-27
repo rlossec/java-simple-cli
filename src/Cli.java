@@ -29,6 +29,10 @@ public class Cli {
 			} else if (command.equals("datetime")) {
 				LocalDateTime datetime = LocalDateTime.now();
 				output = datetime.toString();
+			}  else if (command.equals("user")){
+				output = System.getProperty("user.name");
+			} else if (command.equals("userhome")) {
+				output = System.getProperty("user.home");
 			} else {
 				// String concatenation
 				output = "Command '" + command + "' not found.";
