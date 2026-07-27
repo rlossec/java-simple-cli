@@ -26,6 +26,9 @@ public class Cli {
 				LocalDateTime datetime = LocalDateTime.now();
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss:ns");
 				output = datetime.format(formatter);
+			} else if (command.equals("datetime")) {
+				LocalDateTime datetime = LocalDateTime.now();
+				output = datetime.toString();
 			} else {
 				// String concatenation
 				output = "Command '" + command + "' not found.";
