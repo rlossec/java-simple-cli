@@ -1,4 +1,6 @@
 import java.util.Scanner;
+import java.time.LocalDateTime; // Import the LocalDateTime class
+import java.time.format.DateTimeFormatter; // Import the DateTimeFormatter class
 
 public class Cli {
 
@@ -16,6 +18,10 @@ public class Cli {
 			String output = ""; // A variable named output of type String
 			if (command.equals("exit")) {
 				break; // Forces exit of the while loop
+			} else if (command.equals("date")) {
+				LocalDateTime date = LocalDateTime.now();
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+				output = date.format(formatter);
 			} else {
 				// String concatenation
 				output = "Command '" + command + "' not found.";
