@@ -18,8 +18,11 @@ public class Cli {
 		System.out.print("> "); // Prompt
 		while (true) { // Infinite loop
 			String command = scanner.nextLine(); // Get input from console as a string
-			String[] parts = command.split(" ");
-			String[] arguments = Arrays.copyOfRange(parts, 1, parts.length);
+			String[] parts = command.split(" ", 2);
+			String arguments = "";
+			if (parts.length > 1) {
+				arguments = parts[1];
+			}
 			String output = ""; // A variable named output of type String
 			if (command.equals("exit")) {
 				break; // Forces exit of the while loop
@@ -43,13 +46,9 @@ public class Cli {
 				output = String.format(template, System.getProperty("os.name"), System.getProperty("os.version"));	
 			} else if (command.startsWith("printenv")) {
 				Map<String, String> env = System.getenv();
-				for (String arg : arguments) {
-					output = output + " " + env.get(arg);
-				}
+				output = env.get(arguments);
 			} else if (command.startsWith("echo")) {
-				for (String arg : arguments) {
-					output = output + " " + arg;
-				}
+				output = arguments;
 			} else {
 				// String concatenation
 				output = "Command '" + command + "' not found.";
