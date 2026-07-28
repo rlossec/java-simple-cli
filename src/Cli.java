@@ -1,7 +1,9 @@
 import java.util.Scanner;
-import java.time.LocalDateTime; // Import the LocalDateTime class
-import java.time.format.DateTimeFormatter; // Import the DateTimeFormatter class
 import java.util.Map;
+import java.util.Arrays;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Cli {
 
@@ -44,6 +46,12 @@ public class Cli {
 					if (env.containsKey(arg)) {
 						output = output + " " + env.get(arg);
 					}
+				}
+			} else if (command.startsWith("echo")) {
+				String[] parts = command.split(" ");
+				String[] arguments = Arrays.copyOfRange(parts, 1, parts.length);
+				for (String arg : arguments) {
+					output = output + " " + arg;
 				}
 			} else {
 				// String concatenation
