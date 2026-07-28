@@ -18,6 +18,8 @@ public class Cli {
 		System.out.print("> "); // Prompt
 		while (true) { // Infinite loop
 			String command = scanner.nextLine(); // Get input from console as a string
+			String[] parts = command.split(" ");
+			String[] arguments = Arrays.copyOfRange(parts, 1, parts.length);
 			String output = ""; // A variable named output of type String
 			if (command.equals("exit")) {
 				break; // Forces exit of the while loop
@@ -32,7 +34,7 @@ public class Cli {
 			} else if (command.equals("datetime")) {
 				LocalDateTime datetime = LocalDateTime.now();
 				output = datetime.toString();
-			}  else if (command.equals("user")){
+			}  else if (command.equals("useraccount")){
 				output = System.getProperty("user.name");
 			} else if (command.equals("userhome")) {
 				output = System.getProperty("user.home");
@@ -40,16 +42,11 @@ public class Cli {
 				String template = "%s (%s).";
 				output = String.format(template, System.getProperty("os.name"), System.getProperty("os.version"));	
 			} else if (command.startsWith("printenv")) {
-				String[] parts = command.split(" ");
 				Map<String, String> env = System.getenv();
-				for (String arg : parts) {
-					if (env.containsKey(arg)) {
-						output = output + " " + env.get(arg);
-					}
+				for (String arg : arguments) {
+					output = output + " " + env.get(arg);
 				}
 			} else if (command.startsWith("echo")) {
-				String[] parts = command.split(" ");
-				String[] arguments = Arrays.copyOfRange(parts, 1, parts.length);
 				for (String arg : arguments) {
 					output = output + " " + arg;
 				}
