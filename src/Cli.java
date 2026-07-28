@@ -19,35 +19,38 @@ public class Cli {
 		while (true) { // Infinite loop
 			String command = scanner.nextLine(); // Get input from console as a string
 			String[] parts = command.split(" ", 2);
+			String keyword = parts[0];
 			String arguments = "";
 			if (parts.length > 1) {
 				arguments = parts[1];
 			}
 			String output = ""; // A variable named output of type String
-			if (command.equals("exit")) {
+			if (keyword.equals("exit")) {
 				break; // Forces exit of the while loop
-			} else if (command.equals("date")) {
+			} else if (keyword.equals("date")) {
 				LocalDateTime date = LocalDateTime.now();
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 				output = date.format(formatter);
-			} else if (command.equals("time")) {
+			} else if (keyword.equals("time")) {
 				LocalDateTime datetime = LocalDateTime.now();
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss:ns");
 				output = datetime.format(formatter);
-			} else if (command.equals("datetime")) {
+			} else if (keyword.equals("datetime")) {
 				LocalDateTime datetime = LocalDateTime.now();
 				output = datetime.toString();
 			}  else if (command.equals("useraccount")){
 				output = System.getProperty("user.name");
-			} else if (command.equals("userhome")) {
+			} else if (keyword.equals("userhome")) {
 				output = System.getProperty("user.home");
-			} else if (command.equals("os")) {	 
+			} else if (keyword.equals("os")) {	 
 				String template = "%s (%s).";
 				output = String.format(template, System.getProperty("os.name"), System.getProperty("os.version"));	
-			} else if (command.startsWith("printenv")) {
+			} else if (keyword.equals("printenv")) {
 				Map<String, String> env = System.getenv();
-				output = env.get(arguments);
-			} else if (command.startsWith("echo")) {
+				if (env.containsKey(arguments)) {
+					output = env.get(arguments);
+				}
+			} else if (keyword.equals("echo")) {
 				output = arguments;
 			} else {
 				// String concatenation
