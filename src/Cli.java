@@ -1,6 +1,7 @@
 import java.util.Scanner;
 import java.time.LocalDateTime; // Import the LocalDateTime class
 import java.time.format.DateTimeFormatter; // Import the DateTimeFormatter class
+import java.util.Map;
 
 public class Cli {
 
@@ -33,9 +34,17 @@ public class Cli {
 				output = System.getProperty("user.name");
 			} else if (command.equals("userhome")) {
 				output = System.getProperty("user.home");
-			} else if (command.equals("os")) {	
+			} else if (command.equals("os")) {	 
 				String template = "%s (%s).";
 				output = String.format(template, System.getProperty("os.name"), System.getProperty("os.version"));	
+			} else if (command.startsWith("printenv")) {
+				String[] parts = command.split(" ");
+				Map<String, String> env = System.getenv();
+				for (String arg : parts) {
+					if (env.containsKey(arg)) {
+						output = output + " " + env.get(arg);
+					}
+				}
 			} else {
 				// String concatenation
 				output = "Command '" + command + "' not found.";
