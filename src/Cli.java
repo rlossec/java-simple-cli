@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import java.util.Objects;
+import java.io.File;
 
 
 public class Cli {
@@ -59,11 +60,29 @@ public class Cli {
 						output += entry.getKey() + "=" + entry.getValue() + "\n";
 					}
 				}
+			} else if (keyword.equals("ls")) {
+				File directory = new File(arguments);
+				if (arguments.isEmpty() || !directory.isDirectory()) {
+					output = "Not a directory";
+				} else {
+					File[] files = directory.listFiles();
+					if (files != null) {
+						for (File file : files) {
+							output += file.getName() + "\n";
+						}
+					}
+				}
+
 			} else if (keyword.equals("echo") || keyword.equals("print")) {
 				output = arguments;
 			} else {
 				output = "Command '" + command + "' not found.";
 			}
+
+			if (output.endsWith("\n")) {
+				output = output.substring(0, output.length() - 1);
+			}
+			
 			System.out.println(output);
 			System.out.print("> ");
 		}
