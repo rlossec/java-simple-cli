@@ -1,11 +1,26 @@
 import java.util.Scanner;
 import java.util.Map;
-import java.util.Arrays;
+import java.util.Random;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import java.io.File;
+import java.io.BufferedReader;
+import java.io.IOException;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import java.util.stream.Stream;
+
+
+
 public class Cli {
+
+	private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss:n");
+	private static final Path chuckNorrisQuotesPath = Path.of("../data/chuckNorris.txt");
 
     // The main method is the entry point of the program. Rules regarding the main method:
     //     - public: so the JVM can access it from "outside"
@@ -16,6 +31,7 @@ public class Cli {
     public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in); // Listen to the standard input (console)
 		System.out.print("> "); // Prompt
+
 		while (true) { // Infinite loop
 			String command = scanner.nextLine(); // Get input from console as a string
 			String[] parts = command.split(" ", 2);
@@ -24,21 +40,19 @@ public class Cli {
 			if (parts.length > 1) {
 				arguments = parts[1];
 			}
-			String output = ""; // A variable named output of type String
-			if (keyword.equals("exit")) {
+			String output = "";
+			if (keyword.equals("exit") || keyword.equals("logout")) {
 				break; // Forces exit of the while loop
 			} else if (keyword.equals("date")) {
 				LocalDateTime date = LocalDateTime.now();
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-				output = date.format(formatter);
+				output = date.format(dateFormatter);
 			} else if (keyword.equals("time")) {
 				LocalDateTime datetime = LocalDateTime.now();
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss:ns");
-				output = datetime.format(formatter);
+				output = datetime.format(timeFormatter);
 			} else if (keyword.equals("datetime")) {
 				LocalDateTime datetime = LocalDateTime.now();
 				output = datetime.toString();
-			}  else if (command.equals("useraccount")){
+			}  else if (keyword.equals("useraccount")){
 				output = System.getProperty("user.name");
 			} else if (keyword.equals("userhome")) {
 				output = System.getProperty("user.home");
@@ -46,20 +60,76 @@ public class Cli {
 				String template = "%s (%s).";
 				output = String.format(template, System.getProperty("os.name"), System.getProperty("os.version"));	
 			} else if (keyword.equals("printenv")) {
+				StringBuilder preparedOutput = new StringBuilder();
 				Map<String, String> env = System.getenv();
-				if (env.containsKey(arguments)) {
-					output = env.get(arguments);
+				if (!arguments.isEmpty()) {
+					if (env.containsKey(arguments)) {
+						preparedOutput.append(env.get(arguments));
+					}
+				} else {
+					for (Map.Entry<String, String> entry : env.entrySet()) {
+						preparedOutput.append(entry.getKey() + "=" + entry.getValue() + "\n");
+					}
 				}
-			} else if (keyword.equals("echo")) {
+				output = preparedOutput.toString();
+			} else if (keyword.equals("ls")) {
+				StringBuilder preparedOutput = new StringBuilder();
+				File directory = new File(arguments);
+				if (arguments.isEmpty() || !directory.isDirectory()) {
+					output = "Not a directory";
+				} else {
+					File[] files = directory.listFiles();
+					if (files != null) {
+						for (File file : files) {
+							preparedOutput.append(file.getName() + "\n");
+						}
+					}
+					output = preparedOutput.toString();
+				}
+			} else if (keyword.equals("chuck")) {
+
+				// Pick a random line number
+				int randomLineNumber = 0;
+				try (Stream<String> lines = Files.lines(chuckNorrisQuotesPath)) {
+					int documentLinesNumber = (int) lines.count();
+					Random random = new Random();
+					randomLineNumber = random.nextInt(documentLinesNumber);
+				}
+				catch (IOException e) {
+					output = "Error reading file.";
+				}
+
+				// Find and read the line
+				try (BufferedReader br = Files.newBufferedReader(chuckNorrisQuotesPath)) {
+
+					String line;
+					int currentLine = 0;
+
+					while ((line = br.readLine()) != null) {
+						if (currentLine == randomLineNumber) {
+							output = line;
+							break;
+						}
+						currentLine++;
+					}
+				}
+				catch (IOException e) {
+					output = "Error reading file.";
+				}
+
+
+			} else if (keyword.equals("echo") || keyword.equals("print")) {
 				output = arguments;
 			} else {
-				// String concatenation
 				output = "Command '" + command + "' not found.";
 			}
-			System.out.println(output); // Print with new line (ln)
-			System.out.print("> "); // Prompt
+
+			output = output.stripTrailing();
+
+			System.out.println(output);
+			System.out.print("> ");
 		}
-		scanner.close(); // Best practice, always close a stream when no more needed
+		scanner.close(); // always close a stream when no more needed
 		System.out.println("Bye!");
     }
 
