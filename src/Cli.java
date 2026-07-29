@@ -1,16 +1,26 @@
 import java.util.Scanner;
 import java.util.Map;
+import java.util.Random;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import java.io.File;
+import java.io.BufferedReader;
+import java.io.IOException;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import java.util.stream.Stream;
+
 
 
 public class Cli {
 
 	private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss:n");
+	private static final Path chuckNorrisQuotesPath = Path.of("../data/chuckNorris.txt");
 
     // The main method is the entry point of the program. Rules regarding the main method:
     //     - public: so the JVM can access it from "outside"
@@ -76,6 +86,37 @@ public class Cli {
 					}
 					output = preparedOutput.toString();
 				}
+			} else if (keyword.equals("chuck")) {
+
+				// Pick a random line number
+				int randomLineNumber = 0;
+				try (Stream<String> lines = Files.lines(chuckNorrisQuotesPath)) {
+					int documentLinesNumber = (int) lines.count();
+					Random random = new Random();
+					randomLineNumber = random.nextInt(documentLinesNumber);
+				}
+				catch (IOException e) {
+					output = "Error reading file.";
+				}
+
+				// Find and read the line
+				try (BufferedReader br = Files.newBufferedReader(chuckNorrisQuotesPath)) {
+
+					String line;
+					int currentLine = 0;
+
+					while ((line = br.readLine()) != null) {
+						if (currentLine == randomLineNumber) {
+							output = line;
+							break;
+						}
+						currentLine++;
+					}
+				}
+				catch (IOException e) {
+					output = "Error reading file.";
+				}
+
 
 			} else if (keyword.equals("echo") || keyword.equals("print")) {
 				output = arguments;
