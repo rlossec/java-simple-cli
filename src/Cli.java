@@ -68,7 +68,11 @@ public class Cli {
 					}
 				} else {
 					for (Map.Entry<String, String> entry : env.entrySet()) {
-						preparedOutput.append(entry.getKey() + "=" + entry.getValue() + "\n");
+						preparedOutput
+								.append(entry.getKey())
+								.append('=')
+								.append(entry.getValue())
+								.append('\n');
 					}
 				}
 				output = preparedOutput.toString();
@@ -81,41 +85,28 @@ public class Cli {
 					File[] files = directory.listFiles();
 					if (files != null) {
 						for (File file : files) {
-							preparedOutput.append(file.getName() + "\n");
+							preparedOutput
+								.append(file.getName());=
+								.append("\n")
 						}
 					}
 					output = preparedOutput.toString();
 				}
 			} else if (keyword.equals("chuck")) {
 
-				// Pick a random line number
-				int randomLineNumber = 0;
-				try (Stream<String> lines = Files.lines(chuckNorrisQuotesPath)) {
-					int documentLinesNumber = (int) lines.count();
-					Random random = new Random();
-					randomLineNumber = random.nextInt(documentLinesNumber);
-				}
-				catch (IOException e) {
-					output = "Error reading file.";
-				}
+			try {
+					List<String> quotes = Files.readAllLines(CHUCK_NORRIS_QUOTES_PATH);
 
-				// Find and read the line
-				try (BufferedReader br = Files.newBufferedReader(chuckNorrisQuotesPath)) {
-
-					String line;
-					int currentLine = 0;
-
-					while ((line = br.readLine()) != null) {
-						if (currentLine == randomLineNumber) {
-							output = line;
-							break;
-						}
-						currentLine++;
+					if (quotes.isEmpty()) {
+							output = "No quotes found.";
+					} else {
+							Random random = new Random();
+							output = quotes.get(random.nextInt(quotes.size()));
 					}
-				}
-				catch (IOException e) {
+
+			} catch (IOException e) {
 					output = "Error reading file.";
-				}
+			}
 
 
 			} else if (keyword.equals("echo") || keyword.equals("print")) {
