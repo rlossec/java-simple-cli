@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import java.util.Objects;
+
+
 public class Cli {
 
     // The main method is the entry point of the program. Rules regarding the main method:
@@ -24,7 +27,7 @@ public class Cli {
 			if (parts.length > 1) {
 				arguments = parts[1];
 			}
-			String output = ""; // A variable named output of type String
+			String output = "";
 			if (keyword.equals("exit")) {
 				break; // Forces exit of the while loop
 			} else if (keyword.equals("date")) {
@@ -38,7 +41,7 @@ public class Cli {
 			} else if (keyword.equals("datetime")) {
 				LocalDateTime datetime = LocalDateTime.now();
 				output = datetime.toString();
-			}  else if (command.equals("useraccount")){
+			}  else if (keyword.equals("useraccount")){
 				output = System.getProperty("user.name");
 			} else if (keyword.equals("userhome")) {
 				output = System.getProperty("user.home");
@@ -46,20 +49,18 @@ public class Cli {
 				String template = "%s (%s).";
 				output = String.format(template, System.getProperty("os.name"), System.getProperty("os.version"));	
 			} else if (keyword.equals("printenv")) {
-				Map<String, String> env = System.getenv();
-				if (env.containsKey(arguments)) {
-					output = env.get(arguments);
+				if (System.getenv(arguments) != null) {
+					output = System.getenv(arguments);
 				}
 			} else if (keyword.equals("echo")) {
 				output = arguments;
 			} else {
-				// String concatenation
 				output = "Command '" + command + "' not found.";
 			}
-			System.out.println(output); // Print with new line (ln)
-			System.out.print("> "); // Prompt
+			System.out.println(output);
+			System.out.print("> ");
 		}
-		scanner.close(); // Best practice, always close a stream when no more needed
+		scanner.close(); // always close a stream when no more needed
 		System.out.println("Bye!");
     }
 
