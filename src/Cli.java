@@ -1,15 +1,16 @@
 import java.util.Scanner;
 import java.util.Map;
-import java.util.Arrays;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import java.util.Objects;
 import java.io.File;
 
 
 public class Cli {
+
+	private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss:n");
 
     // The main method is the entry point of the program. Rules regarding the main method:
     //     - public: so the JVM can access it from "outside"
@@ -20,6 +21,7 @@ public class Cli {
     public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in); // Listen to the standard input (console)
 		System.out.print("> "); // Prompt
+
 		while (true) { // Infinite loop
 			String command = scanner.nextLine(); // Get input from console as a string
 			String[] parts = command.split(" ", 2);
@@ -33,11 +35,10 @@ public class Cli {
 				break; // Forces exit of the while loop
 			} else if (keyword.equals("date")) {
 				LocalDateTime date = LocalDateTime.now();
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 				output = date.format(formatter);
 			} else if (keyword.equals("time")) {
 				LocalDateTime datetime = LocalDateTime.now();
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss:ns");
+				
 				output = datetime.format(formatter);
 			} else if (keyword.equals("datetime")) {
 				LocalDateTime datetime = LocalDateTime.now();
@@ -82,7 +83,7 @@ public class Cli {
 			if (output.endsWith("\n")) {
 				output = output.substring(0, output.length() - 1);
 			}
-			
+
 			System.out.println(output);
 			System.out.print("> ");
 		}
