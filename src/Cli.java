@@ -35,11 +35,10 @@ public class Cli {
 				break; // Forces exit of the while loop
 			} else if (keyword.equals("date")) {
 				LocalDateTime date = LocalDateTime.now();
-				output = date.format(formatter);
+				output = date.format(dateFormatter);
 			} else if (keyword.equals("time")) {
 				LocalDateTime datetime = LocalDateTime.now();
-				
-				output = datetime.format(formatter);
+				output = datetime.format(timeFormatter);
 			} else if (keyword.equals("datetime")) {
 				LocalDateTime datetime = LocalDateTime.now();
 				output = datetime.toString();
@@ -51,17 +50,20 @@ public class Cli {
 				String template = "%s (%s).";
 				output = String.format(template, System.getProperty("os.name"), System.getProperty("os.version"));	
 			} else if (keyword.equals("printenv")) {
+				StringBuilder preparedOutput = new StringBuilder();
 				Map<String, String> env = System.getenv();
 				if (!arguments.isEmpty()) {
 					if (env.containsKey(arguments)) {
-						output = env.get(arguments);
+						preparedOutput.append(env.get(arguments));
 					}
 				} else {
 					for (Map.Entry<String, String> entry : env.entrySet()) {
-						output += entry.getKey() + "=" + entry.getValue() + "\n";
+						preparedOutput.append(entry.getKey() + "=" + entry.getValue() + "\n");
 					}
 				}
+				output = preparedOutput.toString();
 			} else if (keyword.equals("ls")) {
+				StringBuilder preparedOutput = new StringBuilder();
 				File directory = new File(arguments);
 				if (arguments.isEmpty() || !directory.isDirectory()) {
 					output = "Not a directory";
@@ -69,9 +71,10 @@ public class Cli {
 					File[] files = directory.listFiles();
 					if (files != null) {
 						for (File file : files) {
-							output += file.getName() + "\n";
+							preparedOutput.append(file.getName() + "\n");
 						}
 					}
+					output = preparedOutput.toString();
 				}
 
 			} else if (keyword.equals("echo") || keyword.equals("print")) {
@@ -80,9 +83,7 @@ public class Cli {
 				output = "Command '" + command + "' not found.";
 			}
 
-			if (output.endsWith("\n")) {
-				output = output.substring(0, output.length() - 1);
-			}
+			output = output.stripTrailing();
 
 			System.out.println(output);
 			System.out.print("> ");
