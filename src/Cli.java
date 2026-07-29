@@ -28,7 +28,7 @@ public class Cli {
 				arguments = parts[1];
 			}
 			String output = "";
-			if (keyword.equals("exit")) {
+			if (keyword.equals("exit") || keyword.equals("logout")) {
 				break; // Forces exit of the while loop
 			} else if (keyword.equals("date")) {
 				LocalDateTime date = LocalDateTime.now();
@@ -49,10 +49,17 @@ public class Cli {
 				String template = "%s (%s).";
 				output = String.format(template, System.getProperty("os.name"), System.getProperty("os.version"));	
 			} else if (keyword.equals("printenv")) {
-				if (System.getenv(arguments) != null) {
-					output = System.getenv(arguments);
+				Map<String, String> env = System.getenv();
+				if (!arguments.isEmpty()) {
+					if (env.containsKey(arguments)) {
+						output = env.get(arguments);
+					}
+				} else {
+					for (Map.Entry<String, String> entry : env.entrySet()) {
+						output += entry.getKey() + "=" + entry.getValue() + "\n";
+					}
 				}
-			} else if (keyword.equals("echo")) {
+			} else if (keyword.equals("echo") || keyword.equals("print")) {
 				output = arguments;
 			} else {
 				output = "Command '" + command + "' not found.";
